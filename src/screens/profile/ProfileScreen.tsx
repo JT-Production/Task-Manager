@@ -108,7 +108,7 @@ const Profile = () => {
         </View>
         <AppText style={styles.name}>John Doe</AppText>
 
-        <View style={styles.upGrade}>
+        {/* <View style={styles.upGrade}>
           <AppText light style={{ fontSize: s(14) }}>
             Upgrade to Premium
           </AppText>
@@ -118,7 +118,7 @@ const Profile = () => {
             style={styles.upgradeButton}
             onPress={() => {}}
           />
-        </View>
+        </View> */}
 
         {profileOutline.map((item, i) => (
           <View
