@@ -27,6 +27,7 @@ export default function MainAppStack() {
         component={AddTaskScreen}
         options={{ headerShown: true }}
       />
+      <Stack.Screen name="MainBottomTabStack" component={MainBottomTabStack} />
     </Stack.Navigator>
   );
 }

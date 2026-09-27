@@ -9,16 +9,20 @@ interface User {
   // firstName: string
   // lastName: string
   // gender: string
-  // image: string
+  image?: string;
 }
 
 interface authState {
-  user: User[];
+  user: User;
   accessToken: string | null;
 }
 
 const initialState: authState = {
-  user: [],
+  user: {
+    id: 0,
+    username: "",
+    email: "",
+  },
   accessToken: null,
 };
 
@@ -27,8 +31,8 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     userLogin(state, action) {
-      state.user.push(action.payload);
-      state.accessToken = action.payload.accessToken;
+      state.user = action.payload;
+      state.accessToken = action.payload.token;
       console.log(state.user, "authSlice state");
       console.log(state.accessToken, "auth Token");
       // Alert.alert("Login Success");

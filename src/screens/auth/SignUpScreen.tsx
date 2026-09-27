@@ -39,19 +39,17 @@ const SignUpScreen = () => {
     }
     setIsLoading(true);
     const response = await registerUser(username, email, password);
-    console.log(response, "SIGN UP RESs");
+    console.log(response.data.user, "User Data");
 
     if (response.status === 201) {
       setError("");
-      dispatch(userLogin(response.user));
+      dispatch(userLogin(response.data.user));
       //   await AsyncStorage.setItem("token", response.user.accessToken);
-      console.log(response.user, "SIGN UP RES");
       navigation.navigate("MainBottomTabStack", { screen: "Home" });
     } else {
-      setError("INVALID CREDENTIALS");
+      setError(response.data.message);
     }
     setIsLoading(false);
-    console.log(response.data.status, "SIGN UP ELSE");
   };
 
   const isFormValid = username.trim().length > 0 && password.trim().length > 0;
@@ -166,7 +164,7 @@ const SignUpScreen = () => {
               <AppText style={styles.footerText}>
                 Already have an account?{" "}
               </AppText>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
                 <AppText varient="bold" style={styles.signUpLink}>
                   Sign In
                 </AppText>

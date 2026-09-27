@@ -1,12 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import * as SplashScreen from "expo-splash-screen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getCurrentUser } from "../../services/api";
 import { useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
-import { userLogin } from "../../../store/reducers/authSlice";
+import { getCurrentUser } from "../../api/auth.api";
 import { AppColors } from "../../utils/colors";
+import { userLogin } from "../../../store/reducers/authSlice";
 
 interface Props {
   onFinish: () => void;
@@ -19,15 +18,12 @@ export default function SplashhScreen({ onFinish }: Props) {
   const checkAuth = async () => {
     const token = await AsyncStorage.getItem("token");
     console.log(token, "TOKEN");
-
     if (token) {
       const user = await getCurrentUser(token);
       console.log(JSON.stringify(user.data, null, 2), "USER");
-
       if (user && user.status === 200) {
         dispatch(userLogin(user.data));
-
-        // navigation.navigate("MainBottomTabStack", { screen: "Home" });
+        navigation.navigate("MainBottomTabStack", { screen: "Home" });
       }
     }
   };

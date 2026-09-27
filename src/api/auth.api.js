@@ -21,7 +21,7 @@ const loginUser = async (email, password) => {
       email,
       password,
     });
-    console.log(JSON.stringify(response, null, 4));
+    console.log(JSON.stringify(response, null, 4), "response");
     return response;
   } catch (error) {
     console.log(error.response.user);
@@ -29,4 +29,19 @@ const loginUser = async (email, password) => {
   }
 };
 
-export { registerUser, loginUser };
+const getCurrentUser = async (token) => {
+  try {
+    const response = await connectionInstance.get("/users/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(JSON.stringify(response, null, 2), "response");
+    return response;
+  } catch (error) {
+    console.log(error.response, "error");
+    return error.response;
+  }
+};
+
+export { registerUser, loginUser, getCurrentUser };

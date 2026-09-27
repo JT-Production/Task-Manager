@@ -17,11 +17,11 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { userLogin } from "../../../store/reducers/authSlice";
-import { getCurrentUser, loginUser } from "../../services/api";
+import { loginUser } from "../../api/auth.api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignInScreen = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -31,26 +31,25 @@ const SignInScreen = () => {
   const navigation = useNavigation<any>();
 
   const handleSignIn = async () => {
-    if (!username.trim() || !password.trim()) {
+    if (!email.trim() || !password.trim()) {
       setError("Please fill in all fields");
       return;
     }
     setIsLoading(true);
-    const response = await loginUser(username, password);
+    const response = await loginUser(email, password);
+    console.log(response, "response login");
     if (response.status === 200) {
       setError("");
-      dispatch(userLogin(response.data));
-      await AsyncStorage.setItem("token", response.data.accessToken);
-      console.log(response.data, "LOGIN RES");
+      dispatch(userLogin(response.data.user));
+      await AsyncStorage.setItem("token", response.data.token);
       navigation.navigate("MainBottomTabStack", { screen: "Home" });
     } else {
-      setError("INVALID CREDENTIALS");
+      setError(response.data.message);
     }
     setIsLoading(false);
-    console.log(response.data.status, "LOGIN ELSE");
   };
 
-  const isFormValid = username.trim().length > 0 && password.trim().length > 0;
+  const isFormValid = email.trim().length > 0 && password.trim().length > 0;
 
   return (
     <AppSafeAreaView style={styles.safeArea}>
@@ -95,13 +94,13 @@ const SignInScreen = () => {
 
             <View style={styles.inputGroup}>
               <AppText varient="medium" style={styles.label}>
-                Username
+                Email
               </AppText>
               <AppTextInput
-                placeholder="Enter your username"
-                value={username}
+                placeholder="Enter your email"
+                value={email}
                 onChangeText={(text) => {
-                  setUsername(text);
+                  setEmail(text);
                   if (error) setError("");
                 }}
                 keyboardType="default"

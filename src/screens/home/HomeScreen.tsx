@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import AddButton from "../../components/buttons/AddButton";
 import { updateTask } from "../../../store/reducers/taskSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = () => {
   const navigation = useNavigation<any>();
@@ -124,12 +125,12 @@ const HomeScreen = () => {
     <AppSafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          {user[0]?.image ? (
-            <Image source={{ uri: user[0].image }} style={styles.avatar} />
+          {user?.image ? (
+            <Image source={{ uri: user.image }} style={styles.avatar} />
           ) : (
             <Avatar />
           )}
-          <AppText>Hello, {user[0]?.firstName}!💜</AppText>
+          <AppText>Hello, {user.username}!💜</AppText>
         </View>
         <View style={styles.notificationIcon}>
           <Feather name="bell" size={24} color={AppColors.primary} />

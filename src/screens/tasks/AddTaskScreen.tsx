@@ -17,6 +17,9 @@ import { useDispatch } from "react-redux";
 import { addTask, updateTask } from "../../../store/reducers/taskSlice";
 import { useNavigation } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
+import { createTask } from "../../api/task.api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppDateInput } from "../../components/inputs/AppDateInput";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -32,7 +35,7 @@ const AddTaskScreen = ({ route }: { route: any }) => {
   const [taskName, setTaskName] = useState(task?.title || "");
   const [description, setDescription] = useState(task?.description || "");
   const [dueDate, setDueDate] = useState(task?.dueDate || "");
-  const [status, setStatus] = useState(task?.status || "");
+  const [status, setStatus] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
@@ -56,37 +59,52 @@ const AddTaskScreen = ({ route }: { route: any }) => {
     });
   };
 
-  const handleSaveTask = () => {
-    if (isEditing) {
-      dispatch(
-        updateTask({
-          id: task.id,
-          title: taskName,
-          description,
-          dueDate,
-          status,
-          completed: status === "Completed",
-        }),
-      );
-      console.log(status, "STATUS");
+  // const handleSaveTask = () => {
+  //   if (isEditing) {
+  //     dispatch(
+  //       updateTask({
+  //         id: task.id,
+  //         title: taskName,
+  //         description,
+  //         dueDate,
+  //         status,
+  //         completed: status === "Completed",
+  //       }),
+  //     );
+  //     console.log(status, "STATUS");
 
-      navigation.goBack();
-    } else {
-      dispatch(
-        addTask({
-          id: Date.now(),
-          title: taskName,
-          description: description,
-          dueDate: dueDate,
-          status: status,
-          completed: false,
-        }),
+  //     navigation.goBack();
+  //   } else {
+  //     dispatch(
+  //       addTask({
+  //         id: Date.now(),
+  //         title: taskName,
+  //         description: description,
+  //         dueDate: dueDate,
+  //         status: status,
+  //         completed: false,
+  //       }),
+  //     );
+  //     notify();
+  //     navigation.navigate("MainBottomTabStack", { screen: "Home" });
+  //   }
+  // };
+
+  const addTask = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const res = await createTask(
+        taskName,
+        description,
+        dueDate,
+        status,
+        token,
       );
-      notify();
-      navigation.navigate("MainBottomTabStack", { screen: "Home" });
+      console.log(JSON.stringify(res, null, 4), "res");
+    } catch (error) {
+      console.log(error);
     }
   };
-
   return (
     <View style={styles.container}>
       <View style={{ width: "100%" }}>
@@ -117,13 +135,22 @@ const AddTaskScreen = ({ route }: { route: any }) => {
         <View style={styles.box}>
           <Text style={styles.head}>Status</Text>
           {/* <AppTextInput placeholder="Select your task status" /> */}
+          <AppDateInput
+            value={dueDate}
+            onChangeText={setDueDate}
+            style={styles.selectBox}
+          />
           <TouchableOpacity
             style={styles.selectBox}
             onPress={() => setShowStatusDropdown(!showStatusDropdown)}
           >
             <Text style={styles.paragraph}>
               {" "}
-              {status ? status : "Select your task status"}
+              {status === false
+                ? "Pending"
+                : status === true
+                  ? "Completed"
+                  : "Select your task status"}
             </Text>
             <Feather name="chevron-down" size={24} color="black" />
           </TouchableOpacity>
@@ -131,7 +158,7 @@ const AddTaskScreen = ({ route }: { route: any }) => {
             <View style={styles.statusDropdown}>
               <Pressable
                 onPress={() => {
-                  setStatus("Pending");
+                  setStatus(false);
                   setShowStatusDropdown(false);
                 }}
                 style={({ pressed }) => [
@@ -146,7 +173,7 @@ const AddTaskScreen = ({ route }: { route: any }) => {
               </Pressable>
               <Pressable
                 onPress={() => {
-                  setStatus("In Progress");
+                  setStatus(false);
                   setShowStatusDropdown(false);
                 }}
                 style={({ pressed }) => [
@@ -161,7 +188,7 @@ const AddTaskScreen = ({ route }: { route: any }) => {
               </Pressable>
               <Pressable
                 onPress={() => {
-                  setStatus("Completed");
+                  setStatus(true);
                   setShowStatusDropdown(false);
                 }}
                 style={({ pressed }) => [
@@ -187,9 +214,10 @@ const AddTaskScreen = ({ route }: { route: any }) => {
           taskName === "" ||
           description === "" ||
           dueDate === "" ||
-          status === ""
+          status === null
         }
-        onPress={handleSaveTask}
+        // onPress={handleSaveTask}
+        onPress={addTask}
       />
     </View>
   );
