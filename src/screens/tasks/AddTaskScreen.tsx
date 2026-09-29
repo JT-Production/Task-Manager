@@ -1,4 +1,5 @@
 import {
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -105,6 +106,27 @@ const AddTaskScreen = ({ route }: { route: any }) => {
       console.log(error);
     }
   };
+
+  const [showPicker, setShowPicker] = useState(false);
+
+  const onChange = (event: any, selectedDate: any) => {
+    // Hide picker on Android after selection
+    if (Platform.OS === "android") setShowPicker(false);
+
+    if (selectedDate) {
+      setDueDate(selectedDate);
+    }
+  };
+
+  const formattedDate = dueDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
+  useEffect(() => {
+    console.log(dueDate);
+  });
   return (
     <View style={styles.container}>
       <View style={{ width: "100%" }}>
@@ -124,22 +146,29 @@ const AddTaskScreen = ({ route }: { route: any }) => {
             onChangeText={setDescription}
           />
         </View>
-        <View style={styles.box}>
+        {/* <View style={styles.box}>
           <Text style={styles.head}>Date</Text>
           <AppTextInput
             placeholder="Select your task due date"
             value={dueDate}
             onChangeText={setDueDate}
           />
+        </View> */}
+        <View style={styles.box}>
+          <Text style={styles.head}>Due Date</Text>
+          <AppDateInput
+            // value={dueDate}
+            // onChangeText={setDueDate}
+            style={styles.selectBox}
+            showPicker={showPicker}
+            onChange={onChange}
+            formattedDate={formattedDate}
+          />
         </View>
         <View style={styles.box}>
           <Text style={styles.head}>Status</Text>
           {/* <AppTextInput placeholder="Select your task status" /> */}
-          <AppDateInput
-            value={dueDate}
-            onChangeText={setDueDate}
-            style={styles.selectBox}
-          />
+
           <TouchableOpacity
             style={styles.selectBox}
             onPress={() => setShowStatusDropdown(!showStatusDropdown)}
