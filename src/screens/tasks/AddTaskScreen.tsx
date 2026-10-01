@@ -159,6 +159,7 @@ const AddTaskScreen = ({ route }: { route: any }) => {
           <AppDateInput
             // value={dueDate}
             // onChangeText={setDueDate}
+            dueDate={dueDate}
             style={styles.selectBox}
             showPicker={showPicker}
             onChange={onChange}

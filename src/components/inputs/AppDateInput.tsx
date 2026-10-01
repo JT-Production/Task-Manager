@@ -11,8 +11,9 @@ export const AppDateInput = ({
   setShowPicker,
   formattedDate,
   onChange,
+  dueDate,
 }: any) => {
-  const [dueDate, setDueDate] = useState(new Date());
+  // const [dueDate, setDueDate] = useState(new Date());
   // const [showPicker, setShowPicker] = useState(false);
 
   // const onChange = (event: any, selectedDate: any) => {
@@ -29,6 +30,7 @@ export const AppDateInput = ({
   //   month: "2-digit",
   //   day: "2-digit",
   // });
+
   useEffect(() => {
     console.log(dueDate);
   });
